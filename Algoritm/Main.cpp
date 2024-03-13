@@ -14,7 +14,12 @@ int main() {
 	std::for_each(collection.begin() + 1, collection.end() - 1, [](int &a)->void{ a = 10; }); // для обработки коллекции без первого и последнего элементов\
 	если убрать ссылку у анонимной функции (не [](int &a), а [](int a)), то элементы не заменятся на 10 потому, что передаются копии числа 10, \
 	которые потом удаляются, & передаёт истинный адрес
-
+	
+	// Инсетор для добаления в конец коллекции дополнительных элементов
+	auto b_ins = std::back_inserter(collection);
+	b_ins.operator=(5);
+	b_ins.operator=(6);
+	
 	for (auto& el : collection) // Вывод коллекции "после"
 		std::cout << el << ' ';
 	std::cout << std::endl;
@@ -24,7 +29,7 @@ int main() {
 	std::for_each(collection2.begin(), collection2.end(), [](int& a)->void { 
 		static int i{ 1 }; // Статическая переменная (каждая итерация цикла увеличивает её на 1, эквивалентно ++i)
 		a = i++; // Заполняем коллекцию от 0 до 10 с помощью статической переменной 
-		});
+		});	
 	for (auto& el : collection2) // Вывод в консоль
 		std::cout << el << ' ';
 	std::cout << std::endl;
@@ -33,7 +38,7 @@ int main() {
 	std::for_each(collection3.begin(), collection3.end(), [](int& a)->void {
 		static int i{ 1 };
 		a = i++; 
-		});
+		});		
 	for (auto& el : collection3) // Вывод в консоль
 		std::cout << el << ' ';
 	std::cout << std::endl;
@@ -46,10 +51,25 @@ int main() {
 	/*if (std::equal(collection2.begin(), collection2.end(), collection3.begin(), collection3.end()), XXXXXXXXXXX)
 		std::cout << "equal collections" << std::endl;*/
 	
-	// С помощью библиотеки algorithm можно создавать новую коллекцию collection4 копированием с помощью методов rbegin и rend
+	// С помощью библиотеки algorithm можно создавать новую коллекцию collection4 копированием с помощью методов rbegin и rend	
 	std::vector<int> collection4(collection.rbegin(), collection.rend());
 	for (auto& el : collection4)
 		std::cout << el << ' ';
+	
+	/*auto b_ins = std::back_inserter(collection);
+	b_ins.operator=(5);
+	b_ins.operator=(6);*/
+
+	// Подготовка места для вставки
+	std::vector<int> evens;
+
+	// Третий параметр вставляет значение в вектор evens, back_inserter(evens) - функтор, размещающий значения в конце коллекции
+	std::copy_if(collection.begin(), collection.end(), std::back_inserter(evens),
+		[](const int& a)->bool {return a % 2 == 0; }
+		);
+	for (auto& el : evens)
+		std::cout << el << ' ';
+	std::cout << std::endl;
 
 	return 0;
 }
